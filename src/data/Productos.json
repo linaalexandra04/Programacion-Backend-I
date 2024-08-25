@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "title": "Café Fino",
+        "description": "Un café de molienda fina, ideal para espresso.",
+        "code": "CAF001",
+        "price": 5000,
+        "status": true,
+        "stock": 100,
+        "category": "Café",
+        "thumbnails": []
+    },
+    {
+        "id": 2,
+        "title": "Café Medio",
+        "description": "Café de molienda media, perfecto para preparar en cafetera.",
+        "code": "CAF002",
+        "price": 4500,
+        "status": true,
+        "stock": 150,
+        "category": "Café",
+        "thumbnails": []
+    },
+    {
+        "id": 3,
+        "title": "Café Grueso",
+        "description": "Café de molienda gruesa, ideal para prensa francesa.",
+        "code": "CAF003",
+        "price": 4000,
+        "status": true,
+        "stock": 200,
+        "category": "Café",
+        "thumbnails": []
+    }
+]
