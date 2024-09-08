@@ -1,4 +1,7 @@
 import fs from 'fs';
+import path from 'path';
+import { io } from '../app.js';  
+
 const productosFilePath = './src/data/Productos.json';
 
 export const getAllProducts = (req, res) => {
@@ -62,6 +65,7 @@ export const createProduct = (req, res) => {
                 return res.status(500).json({ error: 'Error al guardar el nuevo producto' });
             }
             res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
+            io.emit('updateProducts', productos);
         });
     });
 };
@@ -94,6 +98,7 @@ export const updateProductById = (req, res) => {
             }
 
             res.json({ message: 'Producto actualizado exitosamente', product: productos[productIndex] });
+            io.emit('updateProducts', productos);
         });
     });
 };
@@ -121,6 +126,7 @@ export const deleteProductById = (req, res) => {
             }
 
             res.json({ message: 'Producto eliminado exitosamente' });
+            io.emit('updateProducts', productos);
         });
     });
 };

@@ -8,7 +8,7 @@
         "status": true,
         "stock": 100,
         "category": "Café",
-        "thumbnails": []
+        "thumbnails": ["public/img/2.png"]
     },
     {
         "id": 2,
@@ -19,7 +19,7 @@
         "status": true,
         "stock": 150,
         "category": "Café",
-        "thumbnails": []
+        "thumbnails": ["public/img/3.png"]
     },
     {
         "id": 3,
@@ -30,6 +30,6 @@
         "status": true,
         "stock": 200,
         "category": "Café",
-        "thumbnails": []
+        "thumbnails": ["public/img/4.png"]
     }
 ]
