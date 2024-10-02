@@ -1,132 +1,107 @@
-import fs from 'fs';
-import path from 'path';
-import { io } from '../app.js';  
+import Product from '../routers/Product.js';
 
-const productosFilePath = './src/data/Productos.json';
+//productos con filtros, paginación y ordenamiento
+export const getProducts = async (req, res) => {
+    try {
+        const { limit = 10, page = 1, sort, query } = req.query;
 
-export const getAllProducts = (req, res) => {
-    fs.readFile(productosFilePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error al leer el archivo de productos' });
-        }
-        let productos = JSON.parse(data);
-        const limit = req.query.limit;
-        if (limit) {
-            productos = productos.slice(0, parseInt(limit));
-        }
-        res.json(productos);
-    });
-};
-
-export const getProductById = (req, res) => {
-    const { pid } = req.params;
-    fs.readFile(productosFilePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error al leer el archivo de productos' });
-        }
-        const productos = JSON.parse(data);
-        const producto = productos.find(p => p.id === parseInt(pid));
-        if (!producto) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
-        }
-        res.json(producto);
-    });
-};
-
-export const createProduct = (req, res) => {
-    const { title, description, code, price, stock, category, thumbnails } = req.body;
-
-    if (!title || !description || !code || !price || !stock || !category) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios excepto thumbnails' });
-    }
-
-    fs.readFile(productosFilePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error al leer el archivo de productos' });
+        // Filtros de búsqueda
+        let filter = {};
+        if (query) {
+            filter = {
+                $or: [
+                    { category: query },
+                    { availability: query }
+                ]
+            };
         }
 
-        let productos = JSON.parse(data);
-        const newProduct = {
-            id: productos.length + 1,  
-            title,
-            description,
-            code,
-            price,
-            status: true,
-            stock,
-            category,
-            thumbnails: thumbnails || []
+        // Ordenamiento (ascendente o descendente por precio)
+        let sortOption = {};
+        if (sort) {
+            sortOption = { price: sort === 'asc' ? 1 : -1 };
+        }
+
+        // Paginación
+        const options = {
+            limit: parseInt(limit),
+            page: parseInt(page),
+            sort: sortOption
         };
 
-        productos.push(newProduct);
+        const products = await Product.paginate(filter, options);
 
-        fs.writeFile(productosFilePath, JSON.stringify(productos, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error al guardar el nuevo producto' });
-            }
-            res.status(201).json({ message: 'Producto creado exitosamente', product: newProduct });
-            io.emit('updateProducts', productos);
-        });
-    });
+        const response = {
+            status: 'success',
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? `/api/products?page=${products.prevPage}` : null,
+            nextLink: products.hasNextPage ? `/api/products?page=${products.nextPage}` : null
+        };
+
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 };
 
-export const updateProductById = (req, res) => {
+// Obtener un producto específico por su ID
+export const getProductById = async (req, res) => {
+    const { pid } = req.params;
+    try {
+        const product = await Product.findById(pid);
+        if (!product) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
+        }
+        res.json({ status: 'success', product });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
+// Crear un nuevo producto
+export const createProduct = async (req, res) => {
+    const { title, description, price, category, availability } = req.body;
+    try {
+        const newProduct = new Product({ title, description, price, category, availability });
+        await newProduct.save();
+        res.json({ status: 'success', product: newProduct });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
+};
+
+// Actualizar un producto
+export const updateProduct = async (req, res) => {
     const { pid } = req.params;
     const updates = req.body;
 
-    fs.readFile(productosFilePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error al leer el archivo de productos' });
+    try {
+        const product = await Product.findByIdAndUpdate(pid, updates, { new: true });
+        if (!product) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
         }
-
-        let productos = JSON.parse(data);
-        const productIndex = productos.findIndex(p => p.id === parseInt(pid));
-
-        if (productIndex === -1) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
-        }
-
-        if (updates.id) {
-            delete updates.id;
-        }
-
-        productos[productIndex] = { ...productos[productIndex], ...updates };
-
-        fs.writeFile(productosFilePath, JSON.stringify(productos, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error al guardar el producto' });
-            }
-
-            res.json({ message: 'Producto actualizado exitosamente', product: productos[productIndex] });
-            io.emit('updateProducts', productos);
-        });
-    });
+        res.json({ status: 'success', product });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 };
 
-export const deleteProductById = (req, res) => {
+// Eliminar un producto
+export const deleteProduct = async (req, res) => {
     const { pid } = req.params;
-
-    fs.readFile(productosFilePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ error: 'Error al leer el archivo de productos' });
+    try {
+        const product = await Product.findByIdAndDelete(pid);
+        if (!product) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado' });
         }
-
-        let productos = JSON.parse(data);
-        const productIndex = productos.findIndex(p => p.id === parseInt(pid));
-
-        if (productIndex === -1) {
-            return res.status(404).json({ error: 'Producto no encontrado' });
-        }
-
-        productos.splice(productIndex, 1);
-
-        fs.writeFile(productosFilePath, JSON.stringify(productos, null, 2), (err) => {
-            if (err) {
-                return res.status(500).json({ error: 'Error al eliminar el producto' });
-            }
-
-            res.json({ message: 'Producto eliminado exitosamente' });
-            io.emit('updateProducts', productos);
-        });
-    });
+        res.json({ status: 'success', message: 'Producto eliminado' });
+    } catch (error) {
+        res.status(500).json({ status: 'error', message: error.message });
+    }
 };

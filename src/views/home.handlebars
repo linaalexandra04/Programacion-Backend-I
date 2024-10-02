@@ -1,14 +1,17 @@
-<h1>Productos</h1>
+<h1>Bienvenido a La Casa del Café</h1>
+
+<h2>Lista de Productos</h2>
 <ul>
     {{#each products}}
-    <li>
-        <h2>{{this.title}} - {{this.price}}</h2>
-        {{#each this.thumbnails}}
-        <img src="/public/img/2.png" alt="{{../this.title}}" width="100">
-        <img src="/public/img/3.png" alt="{{../this.title}}" width="100">
-        <img src="/public/img/4.png" alt="{{../this.title}}" width="100">
-        {{/each}}
-    </li>
+        <li>
+            <h3>{{this.title}}</h3>
+            <p>Precio: ${{this.price}}</p>
+            <a href="/products/{{this._id}}">Ver detalles</a>
+            <form action="/carts/{{cartId}}/products/{{this._id}}" method="POST">
+                <button type="submit">Agregar al carrito</button>
+            </form>
+        </li>
     {{/each}}
 </ul>
 
+<a href="/realtimeproducts">Ver Productos en Tiempo Real</a>

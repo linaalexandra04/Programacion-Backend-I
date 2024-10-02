@@ -1,0 +1,30 @@
+{
+    "cartId": "60c72b2f9f1b2f001c8e4b77",
+    "userId": "12345",
+    "items": [
+    {
+        "productId": "66fd6b70e0984bdc53bed775", 
+        "title": "Café Fino",
+        "price": 10,
+        "quantity": 2,
+        "subtotal": 20
+    },
+    {
+        "productId": "66fd6b70e0984bdc53bed776",
+        "title": "Café Medio",
+        "price": 8,
+        "quantity": 1,
+        "subtotal": 8
+    },
+    {
+        "productId": "66fd6b70e0984bdc53bed777", 
+        "title": "Café Grueso",
+        "price": 12,
+        "quantity": 1,
+        "subtotal": 12
+    }
+    ],
+    "total": 40, 
+    "createdAt": "2024-10-02T15:49:04.167Z",
+    "updatedAt": "2024-10-02T15:49:04.167Z"
+}

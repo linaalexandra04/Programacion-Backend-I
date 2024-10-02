@@ -1,0 +1,38 @@
+<h1>Productos en Tiempo Real</h1>
+
+<ul id="products-list">
+    {{#each products}}
+        <li>
+            <h3>{{this.title}}</h3>
+            <p>Precio: ${{this.price}}</p>
+            <a href="/products/{{this._id}}">Ver detalles</a>
+            <form action="/carts/{{cartId}}/products/{{this._id}}" method="POST">
+                <button type="submit">Agregar al carrito</button>
+            </form>
+        </li>
+    {{/each}}
+</ul>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    socket.on('updateProducts', (newProducts) => {
+        const productsList = document.getElementById('products-list');
+        productsList.innerHTML = '';
+        newProducts.forEach(product => {
+            productsList.innerHTML += `
+                <li>
+                    <h3>${product.title}</h3>
+                    <p>Precio: $${product.price}</p>
+                    <a href="/products/${product._id}">Ver detalles</a>
+                    <form action="/carts/${cartId}/products/${product._id}" method="POST">
+                        <button type="submit">Agregar al carrito</button>
+                    </form>
+                </li>
+            `;
+        });
+    });
+</script>
+
+
+
