@@ -1,6 +1,7 @@
-import Cart from '../routers/Carts.js';
-import Product from '../routers/Product.js';
+import Cart from '../models/Carts.js';
+import Product from '../models/Products.js';
 
+// Obtener carrito por ID
 export const getCartById = async (req, res) => {
     const { cid } = req.params;
     try {
@@ -34,6 +35,11 @@ export const deleteProductFromCart = async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
         }
 
+        const productToRemove = cart.products.find(p => p.product.toString() === pid);
+        if (!productToRemove) {
+            return res.status(404).json({ status: 'error', message: 'Producto no encontrado en el carrito' });
+        }
+
         cart.products = cart.products.filter(p => p.product.toString() !== pid);
         await cart.save();
 
@@ -54,6 +60,12 @@ export const updateCart = async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
         }
 
+        // Validar que todos los productos existan en la base de datos
+        const validProducts = await Product.find({ _id: { $in: products.map(p => p.product) } });
+        if (validProducts.length !== products.length) {
+            return res.status(400).json({ status: 'error', message: 'Uno o más productos no existen' });
+        }
+
         cart.products = products;
         await cart.save();
 
@@ -67,6 +79,10 @@ export const updateCart = async (req, res) => {
 export const updateProductQuantityInCart = async (req, res) => {
     const { cid, pid } = req.params;
     const { quantity } = req.body;
+
+    if (quantity <= 0) {
+        return res.status(400).json({ status: 'error', message: 'La cantidad debe ser mayor que 0' });
+    }
 
     try {
         const cart = await Cart.findById(cid);
@@ -105,4 +121,3 @@ export const deleteAllProductsFromCart = async (req, res) => {
         res.status(500).json({ status: 'error', message: error.message });
     }
 };
-

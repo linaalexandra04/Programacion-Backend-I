@@ -3,7 +3,7 @@ import Product from '../models/Products.js';
 
 const router = Router();
 
-// GET /api/products 
+// GET /api/products - Obtener productos con paginación, filtro y ordenamiento
 router.get('/', async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
@@ -13,13 +13,13 @@ router.get('/', async (req, res) => {
         if (query) {
             filter = {
                 $or: [
-                    { category: query },
-                    { availability: query }
+                    { category: { $regex: query, $options: 'i' } }, 
+                    { availability: query.toLowerCase() === 'true' || query.toLowerCase() === 'false' ? query === 'true' : undefined }
                 ]
             };
         }
 
-        // Ordenamiento 
+        // Ordenamiento
         let sortOption = {};
         if (sort) {
             sortOption = { price: sort === 'asc' ? 1 : -1 };
@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/products/:pid. detalles de un producto específico
+// GET /api/products/:pid - Obtener los detalles de un producto específico
 router.get('/:pid', async (req, res) => {
     const { pid } = req.params;
     try {
@@ -68,5 +68,3 @@ router.get('/:pid', async (req, res) => {
 });
 
 export default router;
-
-

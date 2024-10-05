@@ -38,6 +38,7 @@ router.delete('/:cid/products/:pid', async (req, res) => {
             return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
         }
 
+        // Verificar si el producto está en el carrito
         cart.products = cart.products.filter(p => p.product.toString() !== pid);
         await cart.save();
 
@@ -56,6 +57,13 @@ router.put('/:cid', async (req, res) => {
         const cart = await Cart.findById(cid);
         if (!cart) {
             return res.status(404).json({ status: 'error', message: 'Carrito no encontrado' });
+        }
+
+        // Validar que los productos recibidos existen
+        const productIds = products.map(p => p.product);
+        const existingProducts = await Product.find({ _id: { $in: productIds } });
+        if (existingProducts.length !== productIds.length) {
+            return res.status(400).json({ status: 'error', message: 'Algunos productos no existen' });
         }
 
         cart.products = products;
@@ -80,6 +88,9 @@ router.put('/:cid/products/:pid', async (req, res) => {
 
         const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
         if (productIndex !== -1) {
+            if (quantity <= 0) {
+                return res.status(400).json({ status: 'error', message: 'La cantidad debe ser mayor que 0' });
+            }
             cart.products[productIndex].quantity = quantity;
             await cart.save();
             res.json({ status: 'success', message: 'Cantidad actualizada' });
@@ -111,5 +122,3 @@ router.delete('/:cid', async (req, res) => {
 });
 
 export default router;
-
-

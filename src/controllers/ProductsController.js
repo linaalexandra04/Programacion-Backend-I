@@ -1,6 +1,6 @@
-import Product from '../routers/Product.js';
+import Product from '../models/Products.js';
 
-//productos con filtros, paginación y ordenamiento
+// Obtener productos con filtros, paginación y ordenamiento
 export const getProducts = async (req, res) => {
     try {
         const { limit = 10, page = 1, sort, query } = req.query;
@@ -67,6 +67,12 @@ export const getProductById = async (req, res) => {
 // Crear un nuevo producto
 export const createProduct = async (req, res) => {
     const { title, description, price, category, availability } = req.body;
+
+    // Validar campos requeridos
+    if (!title || !price || !category) {
+        return res.status(400).json({ status: 'error', message: 'Faltan campos requeridos' });
+    }
+
     try {
         const newProduct = new Product({ title, description, price, category, availability });
         await newProduct.save();
