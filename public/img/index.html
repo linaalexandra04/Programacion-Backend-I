@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Casa del Café</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7e7d4;
+            padding: 0;
+            margin: 0;
+        }
+        .header {
+            background-color: #6b4226;
+            padding: 1em;
+            color: white;
+            text-align: center;
+        }
+        .main-content {
+            max-width: 800px;
+            margin: 2em auto;
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .cta-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2em;
+        }
+        .cta-buttons a {
+            text-decoration: none;
+            color: white;
+            padding: 1em 2em;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .cta-buttons .login-btn {
+            background-color: #8b4513;
+        }
+        .cta-buttons .login-btn:hover {
+            background-color: #5a361f;
+        }
+        .cta-buttons .register-btn {
+            background-color: #007bff;
+        }
+        .cta-buttons .register-btn:hover {
+            background-color: #0056b3;
+        }
+        form {
+            margin-top: 2em;
+        }
+        form input {
+            display: block;
+            width: calc(100% - 2em);
+            margin: 1em auto;
+            padding: 0.75em;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        form button {
+            display: block;
+            width: 100%;
+            padding: 0.75em;
+            font-size: 1em;
+            background-color: #6b4226;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        form button:hover {
+            background-color: #5a361f;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Bienvenidos a La Casa del Café</h1>
+    </header>
+
+    <main class="main-content">
+        <h2>Sobre Nosotros</h2>
+        <p>En La Casa del Café, creemos que cada taza de café cuenta una historia. Nuestra misión es traer el mejor café a tu mesa, seleccionado cuidadosamente de las mejores cosechas y preparado con pasión.</p>
+        
+        <div class="cta-buttons">
+            <a href="./login" class="login-btn">Iniciar Sesión</a>
+            <a href="./register" class="register-btn">Registrarse</a>
+            
+        </div>
+
+        <form action="/api/users" method="post" enctype="multipart/form-data">
+            <input type="text" id="firstName" name="firstName" placeholder="Nombre" required>
+            <input type="text" id="lastName" name="lastName" placeholder="Apellido" required>
+            <input type="file" id="thumbnail" name="thumbnail" required>
+            <button type="submit">Registrarse Aquí</button>
+        </form>
+    </main>
+</body>
+</html>

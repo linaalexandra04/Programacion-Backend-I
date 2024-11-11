@@ -1,42 +1,34 @@
-<!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/styles/index.css">
 </head>
 <body>
-    <h1>Lista de Productos</h1>
+    <header>
+        <h1>Welcome to Our Application</h1>
+    </header>
     
-    <div id="product-list">
-        {{#each products}}
-            <div class="product">
-                <h2>{{this.title}}</h2>
-                <p>Precio: ${{this.price}}</p>
-                <p>Categoría: {{this.category}}</p>
-                <p>{{this.description}}</p>
-                
-                    <form action="/api/carts/{{cartId}}/product/{{this._id}}" method="POST">
-                    <button type="submit">Agregar al carrito</button>
-                </form>
-                
-                <a href="/products/{{this._id}}">Ver detalles</a>
-            </div>
-            <hr>
-        {{/each}}
-    </div>
+    <nav>
+        <ul>
+            <li><a href="/login">acceso</a></li>
+            <li><a href="/register">Registro</a></li>
+            <li><a href="/profile">Perfil</a></li>
+            <li><a href="/chat">Chat Room</a></li>
+            <li><a href="/cookies">administrar Cookies</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <section>
+            <h2>sobre nosotros</h2>
+            <p>¡Bienvenido a nuestra increíble aplicación donde podrás chatear, administrar tus cookies y mucho más!</p>
+        </section>
+    </main>
 
-    <!-- Paginación -->
-    <div class="pagination">
-        {{#if hasPrevPage}}
-            <a href="{{prevLink}}">Página anterior</a>
-        {{/if}}
-
-        <span>Página {{page}} de {{totalPages}}</span>
-
-        {{#if hasNextPage}}
-            <a href="{{nextLink}}">Página siguiente</a>
-        {{/if}}
-    </div>
+    <footer>
+        <p>&copy; 2024 Our Application. All rights reserved.</p>
+    </footer>
 </body>
 </html>

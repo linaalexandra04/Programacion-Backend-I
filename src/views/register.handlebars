@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - La Casa del Café</title>
+    <link rel="stylesheet" href="/styles/register.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f7e7d4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background-color: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+        .register-container h1, .register-container h2 {
+            margin-bottom: 1em;
+        }
+        .register-container h1 {
+            color: #8b4513;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .input-group-text {
+            background-color: #f7f7f7;
+            padding: 0.5em;
+            border-right: 1px solid #ccc;
+        }
+        .form-control {
+            border: none;
+            padding: 0.75em;
+            flex: 1;
+        }
+        .btn {
+            padding: 0.75em 1.5em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #6b4226;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #5a361f;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h1><b>La Casa del Café</b></h1>
+        <h2><b>Registro de Usuario</b></h2>
+
+        <form action="/api/users/register" method="post">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="first_name" class="form-control" placeholder="Nombre" required="required">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="last_name" class="form-control" placeholder="Apellido" required="required">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" name="email" class="form-control" placeholder="Correo Electrónico" required="required">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" name="password" class="form-control" placeholder="Contraseña" required="required">
+            </div>
+
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-birthday-cake"></i></span>
+                <input type="number" name="age" class="form-control" placeholder="Edad" required="required">
+            </div>
+            
+            <button type="submit" class="btn">Registrarse</button>
+        </form>
+    </div>
+</body>
+</html>

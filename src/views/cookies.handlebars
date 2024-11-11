@@ -1,0 +1,61 @@
+{{!-- Cookies Management View Template --}}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Cookies</title>
+    <link rel="stylesheet" href="/styles/cookies.css">
+</head>
+<body>
+    <header>
+        <h1>Administra cookies</h1>
+    </header>
+    
+    <main>
+        <section id="cookies-management">
+            <h2>Set a Cookie</h2>
+            <form id="set-cookie-form">
+                <label for="cookie-name">Cookie Name:</label>
+                <input type="text" id="cookie-name" name="cookieName" required>
+                
+                <label for="cookie-value">Cookie Value:</label>
+                <input type="text" id="cookie-value" name="cookieValue" required>
+                
+                <button type="submit">Set Cookie</button>
+            </form>
+
+            <h2>Delete a Cookie</h2>
+            <form id="delete-cookie-form">
+                <label for="delete-cookie-name">Cookie Name:</label>
+                <input type="text" id="delete-cookie-name" name="deleteCookieName" required>
+                
+                <button type="submit">Delete Cookie</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const setCookieForm = document.getElementById('set-cookie-form');
+        const deleteCookieForm = document.getElementById('delete-cookie-form');
+
+        // Set Cookie Event
+        setCookieForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('cookie-name').value;
+            const value = document.getElementById('cookie-value').value;
+            document.cookie = `${name}=${value}; path=/;`;
+            alert(`Cookie "${name}" has been set.`);
+        });
+
+        // Delete Cookie Event
+        deleteCookieForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('delete-cookie-name').value;
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            alert(`Cookie "${name}" has been deleted.`);
+        });
+    </script>
+</body>
+</html>

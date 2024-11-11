@@ -1,89 +1,80 @@
 import express from 'express';
-import { create } from 'express-handlebars';
-import { Server as SocketIOServer } from 'socket.io';
-import http from 'http';
-import multer from 'multer';
 import mongoose from 'mongoose';
-import productsRouter from './routers/Product.js';
-import cartsRouter from './routers/Carts.js';
-import Product from './models/Products.js';
+import passport from 'passport';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
+import { Server as SocketIO } from 'socket.io';
+import initAuthStrategies from './auth/passport.config.js';
+import usersRouter from '../src/routers/users.router.js';
+import viewsRouter from '../src/routers/views.router.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Path configuration
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const httpServer = createServer(app);
+const io = new SocketIO(httpServer);
 
-// MongoDB
-const connectDB = async () => {
-    try {
-        await mongoose.connect('mongodb+srv://alexa999:29oO4cbPUrXPIdUg@cluster1.mh8bk.mongodb.net/tiendaCafe?retryWrites=true&w=majority&appName=Cluster1');
-        console.log('Conexión a MongoDB exitosa');
-    } catch (error) {
-        console.error('Error al conectar a MongoDB:', error);
-        process.exit(1);
-    }
-};
-
-
-//Handlebars
-const hbs = create({
-    extname: '.handlebars',
-    defaultLayout: 'main',
-});
-
-app.engine('.handlebars', hbs.engine);
-app.set('view engine', '.handlebars');
-app.set('views', './src/views/');
-
-// Middleware
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));  
+app.use(cookieParser());
+app.use(session({
+    secret: 'secretCoffeStore',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+initAuthStrategies();
 
-// Rutas de Productos y Carritos
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
+// Set up Handlebars 
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'views'));
+import { engine } from 'express-handlebars';
+app.engine('handlebars', engine());
 
-// Rutas de Vistas
-app.get('/products', (req, res) => {
-    res.render('index', { title: 'Productos con paginación' });
-});
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/carts/:cid', (req, res) => {
-    res.render('cart', { title: 'Carrito específico' });
-});
+// Routes
+app.use('/api/users', usersRouter);
+app.use('/views', viewsRouter);
 
-// Ruta para la raíz
-app.get('/', (req, res) => {
-    res.send('Bienvenido a la API de la tienda de café. Usa /api/products para ver los productos.');
-});
-
-// Ruta para mostrar los detalles del producto
-app.get('/products/:id', async (req, res) => {
-    try {
-        const productId = req.params.id; 
-        const product = await Product.findById(productId); 
-        const cartId = req.session.cartId || 'defaultCartId'; 
-        if (!product) {
-            return res.status(404).send('Producto no encontrado');
-        }
-        res.render('details', { product, cartId }); 
-    } catch (error) {
-        console.error('Error al obtener el producto:', error);
-        res.status(500).send('Error al obtener el producto');
-    }
-});
-
-//servidor HTTP
-const server = http.createServer(app);
-
-// Socket.io 
-export const io = new SocketIOServer(server);
-
+// Socket.io chat setup
 io.on('connection', (socket) => {
-    console.log('Nuevo cliente conectado');
+    console.log('New client connected');
+
+    socket.on('chatMessage', (msg) => {
+        io.emit('message', { user: 'User', text: msg });
+    });
+
     socket.on('disconnect', () => {
-        console.log('Cliente desconectado');
+        console.log('Client disconnected');
     });
 });
 
-// Iniciar el servidor
-server.listen(PORT, () => console.log(`Servidor escuchando en el puerto ${PORT}`));
+// MongoDB 
+const mongoUri = 'mongodb+srv://alexa999:29oO4cbPUrXPIdUg@cluster1.mh8bk.mongodb.net/tiendaCafe?retryWrites=true&w=majority&appName=Cluster1';
+mongoose.connect(mongoUri)
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+    });
+
+// Ruta para la página principal
+app.get('/', (req, res) => {
+    res.render('home');
+});
+
+// Start server
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="/styles/chat.css">
+</head>
+<body>
+    <header>
+        <h1>Bienvenidos a la sala de conversacion</h1>
+    </header>
+    
+    <main>
+        <div id="chat-container">
+            <div id="messages">
+                {{#each messages}}
+                    <div class="message">
+                        <strong>{{this.user}}:</strong> {{this.text}}
+                    </div>
+                {{/each}}
+            </div>
+            
+            <form id="chat-form">
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const messagesContainer = document.getElementById('messages');
+
+        // Send message event
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = messageInput.value;
+            socket.emit('chatMessage', message);
+            messageInput.value = '';
+        });
+
+        // Receive message event
+        socket.on('message', (message) => {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            div.innerHTML = `<strong>${message.user}:</strong> ${message.text}`;
+            messagesContainer.appendChild(div);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>
+
