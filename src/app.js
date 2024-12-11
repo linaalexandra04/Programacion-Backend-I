@@ -10,19 +10,18 @@ import usersRouter from '../src/routers/users.router.js';
 import viewsRouter from '../src/routers/views.router.js';
 import sessionsRouter from './routers/sessions.router.js';
 import cartsRouter from './routers/carts.router.js';
+import productsRouter from './routers/product.router.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
 
-//entorno y carga el archivo adecuado
 const envFile = process.env.NODE_ENV === 'production' ? '.env_prod' : '.env_dev';
 dotenv.config({ path: envFile });
 
 console.log(`Entorno actual: ${process.env.NODE_ENV}`);
 console.log(`Puerto: ${process.env.PORT}`);
 
-// Path configuration
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -30,7 +29,6 @@ const app = express();
 const httpServer = createServer(app);
 const io = new SocketIO(httpServer);
 
-// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -43,22 +41,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 initAuthStrategies();
 
-// Set up Handlebars 
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 import { engine } from 'express-handlebars';
 app.engine('handlebars', engine());
 
-// Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
 app.use('/api/users', usersRouter);
 app.use('/views', viewsRouter);
 app.use('/api/sessions', sessionsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/api/products', productsRouter);
 
-// Socket.io chat setup
 io.on('connection', (socket) => {
     console.log('New client connected');
 
@@ -71,7 +66,6 @@ io.on('connection', (socket) => {
     });
 });
 
-// MongoDB 
 const mongoUri = 'mongodb+srv://alexa999:29oO4cbPUrXPIdUg@cluster1.mh8bk.mongodb.net/tiendaCafe?retryWrites=true&w=majority&appName=Cluster1';
 mongoose.connect(mongoUri)
     .then(() => {
@@ -81,12 +75,10 @@ mongoose.connect(mongoUri)
         console.error('MongoDB connection error:', err);
     });
 
-// Ruta para la página principal
 app.get('/', (req, res) => {
     res.render('home');
 });
 
-// Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 
-// Determinar el archivo de entorno a usar
 const envFile = process.env.NODE_ENV === 'production' ? '.env_prod' : '.env_devel';
 dotenv.config({ path: envFile });
 

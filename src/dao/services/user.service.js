@@ -1,4 +1,4 @@
-import User from '../dao/models/user.model.js';
+import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 
 class UserManager {

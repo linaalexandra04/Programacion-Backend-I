@@ -1,15 +1,13 @@
-// src/routes/products.router.js
-
 import { Router } from 'express';
 import * as productController from '../controllers/product.controller.js';
-import { checkAdminRole, verifyToken } from '../auth/auth.middleware.js';
 
 const router = Router();
 
+// Rutas de productos
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
-router.post('/', verifyToken, checkAdminRole, productController.createProduct); 
-router.put('/:id', verifyToken, checkAdminRole, productController.updateProduct); 
-router.delete('/:id', verifyToken, checkAdminRole, productController.deleteProduct); 
+router.post('/', productController.createProduct);
+router.put('/:id', productController.updateProduct);
+router.delete('/:id', productController.deleteProduct);
 
 export default router;

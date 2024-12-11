@@ -8,37 +8,44 @@ import { verifyToken } from '../auth/auth.milddleware.js';
 const router = Router();
 
 router.get('/current', verifyToken, (req, res) => {
-    res.send({
+    res.status(200).send({
         message: 'Usuario autenticado',
-        user: req.user
+        user: req.user, 
     });
 });
 
-// Ruta de Login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Buscar el usuario por email
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Se requieren email y contraseña' });
+        }
+
+
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).send('Usuario no encontrado');
+            return res.status(401).json({ error: 'Usuario no encontrado' });
         }
 
-        // Comparar la contraseña ingresada con la almacenada
         const isPasswordValid = bcrypt.compareSync(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).send('Contraseña incorrecta');
+            return res.status(401).json({ error: 'Contraseña incorrecta' });
         }
 
-        // Generar token JWT
-        const token = jwt.sign({ id: user._id, role: user.role }, config.SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, 
+            config.SECRET, 
+            { expiresIn: '1h' }
+        );
 
-        // Guardar el token en una cookie
-        res.cookie('token', token, { httpOnly: true }).send({ message: 'Login exitoso', token });
+        res.cookie('jwt', token, { httpOnly: true, secure: false }).status(200).send({
+            message: 'Login exitoso',
+            token,
+        });
     } catch (error) {
         console.error('Error en el login:', error);
-        res.status(500).send('Error interno del servidor');
+        res.status(500).send({ error: 'Error interno del servidor', details: error.message });
     }
 });
 

@@ -1,7 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import UserManager from '../dao/user.manager.js';
+import UserManager from '../dao/services/user.service.js';
 import config from '../config.js';
 import bcrypt from 'bcrypt';
 import { verifyToken} from '../auth/auth.milddleware.js';

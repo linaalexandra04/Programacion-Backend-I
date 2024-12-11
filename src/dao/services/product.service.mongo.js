@@ -1,45 +1,45 @@
-import Product from '../models/product.model.js';
+import ProductModel from '../models/product.model.js';
 
-class ProductServiceMongo {
-    async create(productData) {
+class ProductService {
+    async createProduct(data) {
         try {
-            return await Product.create(productData);
-        } catch (err) {
-            throw new Error(`Error creando producto: ${err.message}`);
+            const newProduct = await ProductModel.create(data);
+            return newProduct;
+        } catch (error) {
+            throw new Error('Error al crear el producto: ' + error.message);
         }
     }
 
-    async getById(productId) {
+    async getAllProducts() {
         try {
-            return await Product.findById(productId).lean();
-        } catch (err) {
-            throw new Error(`Error obteniendo producto por ID: ${err.message}`);
+            return await ProductModel.find();
+        } catch (error) {
+            throw new Error('Error al obtener los productos: ' + error.message);
+        }
+    }
+    async getProductById(id) {
+        try {
+            return await ProductModel.findById(id);
+        } catch (error) {
+            throw new Error('Error al obtener el producto: ' + error.message);
         }
     }
 
-    async getAll() {
+    async updateProduct(id, data) {
         try {
-            return await Product.find().lean();
-        } catch (err) {
-            throw new Error(`Error obteniendo productos: ${err.message}`);
+            return await ProductModel.findByIdAndUpdate(id, data, { new: true });
+        } catch (error) {
+            throw new Error('Error al actualizar el producto: ' + error.message);
         }
     }
 
-    async update(productId, updateData) {
+    async deleteProduct(id) {
         try {
-            return await Product.findByIdAndUpdate(productId, updateData, { new: true });
-        } catch (err) {
-            throw new Error(`Error actualizando producto: ${err.message}`);
-        }
-    }
-
-    async delete(productId) {
-        try {
-            return await Product.findByIdAndDelete(productId);
-        } catch (err) {
-            throw new Error(`Error eliminando producto: ${err.message}`);
+            return await ProductModel.findByIdAndDelete(id);
+        } catch (error) {
+            throw new Error('Error al eliminar el producto: ' + error.message);
         }
     }
 }
 
-export default ProductServiceMongo;
+export default ProductService;

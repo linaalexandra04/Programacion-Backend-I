@@ -2,8 +2,6 @@ import ProductService from '../dao/services/product.service.mongo.js';
 import ProductDTO from '../dao/dto/product.dto.js';
 
 const productService = new ProductService();
-
-// Obtener todos los productos
 export const getAllProducts = async (req, res) => {
     try {
         const products = await productService.getAllProducts();
@@ -14,7 +12,6 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-// Obtener un producto por ID
 export const getProductById = async (req, res) => {
     const { id } = req.params;
     try {
@@ -29,7 +26,6 @@ export const getProductById = async (req, res) => {
     }
 };
 
-// Crear un nuevo producto
 export const createProduct = async (req, res) => {
     try {
         const newProduct = await productService.createProduct(req.body);
@@ -40,7 +36,6 @@ export const createProduct = async (req, res) => {
     }
 };
 
-// Actualizar un producto existente
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
     try {
@@ -55,7 +50,6 @@ export const updateProduct = async (req, res) => {
     }
 };
 
-// Eliminar un producto por ID
 export const deleteProduct = async (req, res) => {
     const { id } = req.params;
     try {
