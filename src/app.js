@@ -8,8 +8,19 @@ import { Server as SocketIO } from 'socket.io';
 import initAuthStrategies from './auth/passport.config.js';
 import usersRouter from '../src/routers/users.router.js';
 import viewsRouter from '../src/routers/views.router.js';
+import sessionsRouter from './routers/sessions.router.js';
+import cartsRouter from './routers/carts.router.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+
+//entorno y carga el archivo adecuado
+const envFile = process.env.NODE_ENV === 'production' ? '.env_prod' : '.env_dev';
+dotenv.config({ path: envFile });
+
+console.log(`Entorno actual: ${process.env.NODE_ENV}`);
+console.log(`Puerto: ${process.env.PORT}`);
 
 // Path configuration
 const __filename = fileURLToPath(import.meta.url);
@@ -44,6 +55,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/users', usersRouter);
 app.use('/views', viewsRouter);
+app.use('/api/sessions', sessionsRouter);
+app.use('/api/carts', cartsRouter);
 
 // Socket.io chat setup
 io.on('connection', (socket) => {

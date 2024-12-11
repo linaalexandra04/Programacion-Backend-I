@@ -4,9 +4,18 @@ import jwt from 'jsonwebtoken';
 import UserManager from '../dao/user.manager.js';
 import config from '../config.js';
 import bcrypt from 'bcrypt';
+import { verifyToken} from '../auth/auth.milddleware.js';
 
 const router = express.Router();
 const userManager = new UserManager();
+
+// Ruta protegida para obtener el perfil del usuario
+router.get('/profile', verifyToken, (req, res) => {
+    res.send({
+        id: req.user.id,
+        role: req.user.role
+    });
+});
 
 // Register Route
 router.post('/register', async (req, res) => {
